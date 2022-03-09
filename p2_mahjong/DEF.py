@@ -1,0 +1,364 @@
+from collections import defaultdict
+
+
+class ActionType:
+    ActionTypeNull = 0
+    ActionTypeDraw = 1
+    ActionTypeDiscard = 2
+    ActionTypeChow = 3
+    ActionTypePong = 4
+    ActionTypeGong = 5
+    ActionTypeHu = 6
+    ActionTypePass = 7
+    ActionTypeConcealedGong = 8
+    ActionTypePassHu = 9
+    ActionTypeWait = 10
+    ActionTypeAddGong = 11
+
+
+class ActionLabelRange:
+    ACTION_GET_CARD = 0
+    ACTION_HU = 1
+    ACTION_PASS = 2
+    ACTION_DISCARD_BEG = 3
+    ACTION_DISCARD_END = 36
+    ACTION_PONG_BEG = 37
+    ACTION_PONG_END = 70
+    ACTION_GONG_BEG = 71
+    ACTION_GONG_END = 104
+    ACTION_CHOW_BEG = 105
+    ACTION_CHOW_END = 167
+    ACTION_CONCEALED_GONG_BEG = 168
+    ACTION_CONCEALED_GONG_END = 201
+    ACTION_PASS_HU = 202
+    ACTION_WAIT = 203
+    ACTION_ADD_GONG_BEG = 204
+    ACTION_ADD_GONG_END = 237
+    ACTION_VALID = 238
+
+
+class CardIdDef:
+    BAMBOO_1 = 0
+    BAMBOO_2 = 1
+    BAMBOO_3 = 2
+    BAMBOO_4 = 3
+    BAMBOO_5 = 4
+    BAMBOO_6 = 5
+    BAMBOO_7 = 6
+    BAMBOO_8 = 7
+    BAMBOO_9 = 8
+    CHARACTER_1 = 9
+    CHARACTER_2 = 10
+    CHARACTER_3 = 11
+    CHARACTER_4 = 12
+    CHARACTER_5 = 13
+    CHARACTER_6 = 14
+    CHARACTER_7 = 15
+    CHARACTER_8 = 16
+    CHARACTER_9 = 17
+    DOT_1 = 18
+    DOT_2 = 19
+    DOT_3 = 20
+    DOT_4 = 21
+    DOT_5 = 22
+    DOT_6 = 23
+    DOT_7 = 24
+    DOT_8 = 25
+    DOT_9 = 26
+
+
+class ChowLabelDef:
+    BAMBOO_2_3_1 = ActionLabelRange.ACTION_CHOW_BEG + 0
+    BAMBOO_1_3_2 = ActionLabelRange.ACTION_CHOW_BEG + 1
+    BAMBOO_1_2_3 = ActionLabelRange.ACTION_CHOW_BEG + 2  # [1,2,3]
+    BAMBOO_3_4_2 = ActionLabelRange.ACTION_CHOW_BEG + 3
+    BAMBOO_2_4_3 = ActionLabelRange.ACTION_CHOW_BEG + 4
+    BAMBOO_2_3_4 = ActionLabelRange.ACTION_CHOW_BEG + 5  # [2,3,4]
+    BAMBOO_4_5_3 = ActionLabelRange.ACTION_CHOW_BEG + 6
+    BAMBOO_3_5_4 = ActionLabelRange.ACTION_CHOW_BEG + 7
+    BAMBOO_3_4_5 = ActionLabelRange.ACTION_CHOW_BEG + 8  # [3,4,5]
+    BAMBOO_5_6_4 = ActionLabelRange.ACTION_CHOW_BEG + 9
+    BAMBOO_4_6_5 = ActionLabelRange.ACTION_CHOW_BEG + 10
+    BAMBOO_4_5_6 = ActionLabelRange.ACTION_CHOW_BEG + 11  # [4,5,6]
+    BAMBOO_6_7_5 = ActionLabelRange.ACTION_CHOW_BEG + 12
+    BAMBOO_5_7_6 = ActionLabelRange.ACTION_CHOW_BEG + 13
+    BAMBOO_5_6_7 = ActionLabelRange.ACTION_CHOW_BEG + 14  # [5,6,7]
+    BAMBOO_7_8_6 = ActionLabelRange.ACTION_CHOW_BEG + 15
+    BAMBOO_6_8_7 = ActionLabelRange.ACTION_CHOW_BEG + 16
+    BAMBOO_6_7_8 = ActionLabelRange.ACTION_CHOW_BEG + 17  # [6,7,8]
+    BAMBOO_8_9_7 = ActionLabelRange.ACTION_CHOW_BEG + 18
+    BAMBOO_7_9_8 = ActionLabelRange.ACTION_CHOW_BEG + 19
+    BAMBOO_7_8_9 = ActionLabelRange.ACTION_CHOW_BEG + 20  # [7,8,9]
+
+    CHAR_2_3_1 = ActionLabelRange.ACTION_CHOW_BEG + 21
+    CHAR_1_3_2 = ActionLabelRange.ACTION_CHOW_BEG + 22
+    CHAR_1_2_3 = ActionLabelRange.ACTION_CHOW_BEG + 23  # [1,2,3]
+    CHAR_3_4_2 = ActionLabelRange.ACTION_CHOW_BEG + 24
+    CHAR_2_4_3 = ActionLabelRange.ACTION_CHOW_BEG + 25
+    CHAR_2_3_4 = ActionLabelRange.ACTION_CHOW_BEG + 26  # [2,3,4]
+    CHAR_4_5_3 = ActionLabelRange.ACTION_CHOW_BEG + 27
+    CHAR_3_5_4 = ActionLabelRange.ACTION_CHOW_BEG + 28
+    CHAR_3_4_5 = ActionLabelRange.ACTION_CHOW_BEG + 29  # [3,4,5]
+    CHAR_5_6_4 = ActionLabelRange.ACTION_CHOW_BEG + 30
+    CHAR_4_6_5 = ActionLabelRange.ACTION_CHOW_BEG + 31
+    CHAR_4_5_6 = ActionLabelRange.ACTION_CHOW_BEG + 32  # [4,5,6]
+    CHAR_6_7_5 = ActionLabelRange.ACTION_CHOW_BEG + 33
+    CHAR_5_7_6 = ActionLabelRange.ACTION_CHOW_BEG + 34
+    CHAR_5_6_7 = ActionLabelRange.ACTION_CHOW_BEG + 35  # [5,6,7]
+    CHAR_7_8_6 = ActionLabelRange.ACTION_CHOW_BEG + 36
+    CHAR_6_8_7 = ActionLabelRange.ACTION_CHOW_BEG + 37
+    CHAR_6_7_8 = ActionLabelRange.ACTION_CHOW_BEG + 38  # [6,7,8]
+    CHAR_8_9_7 = ActionLabelRange.ACTION_CHOW_BEG + 39
+    CHAR_7_9_8 = ActionLabelRange.ACTION_CHOW_BEG + 40
+    CHAR_7_8_9 = ActionLabelRange.ACTION_CHOW_BEG + 41  # [7,8,9]
+
+    DOT_2_3_1 = ActionLabelRange.ACTION_CHOW_BEG + 42
+    DOT_1_3_2 = ActionLabelRange.ACTION_CHOW_BEG + 43
+    DOT_1_2_3 = ActionLabelRange.ACTION_CHOW_BEG + 44  # [1,2,3]
+    DOT_3_4_2 = ActionLabelRange.ACTION_CHOW_BEG + 45
+    DOT_2_4_3 = ActionLabelRange.ACTION_CHOW_BEG + 46
+    DOT_2_3_4 = ActionLabelRange.ACTION_CHOW_BEG + 47  # [2,3,4]
+    DOT_4_5_3 = ActionLabelRange.ACTION_CHOW_BEG + 48
+    DOT_3_5_4 = ActionLabelRange.ACTION_CHOW_BEG + 49
+    DOT_3_4_5 = ActionLabelRange.ACTION_CHOW_BEG + 50  # [3,4,5]
+    DOT_5_6_4 = ActionLabelRange.ACTION_CHOW_BEG + 51
+    DOT_4_6_5 = ActionLabelRange.ACTION_CHOW_BEG + 52
+    DOT_4_5_6 = ActionLabelRange.ACTION_CHOW_BEG + 53  # [4,5,6]
+    DOT_6_7_5 = ActionLabelRange.ACTION_CHOW_BEG + 54
+    DOT_5_7_6 = ActionLabelRange.ACTION_CHOW_BEG + 55
+    DOT_5_6_7 = ActionLabelRange.ACTION_CHOW_BEG + 56  # [5,6,7]
+    DOT_7_8_6 = ActionLabelRange.ACTION_CHOW_BEG + 57
+    DOT_6_8_7 = ActionLabelRange.ACTION_CHOW_BEG + 58
+    DOT_6_7_8 = ActionLabelRange.ACTION_CHOW_BEG + 59  # [6,7,8]
+    DOT_8_9_7 = ActionLabelRange.ACTION_CHOW_BEG + 60
+    DOT_7_9_8 = ActionLabelRange.ACTION_CHOW_BEG + 61
+    DOT_7_8_9 = ActionLabelRange.ACTION_CHOW_BEG + 62  # [7,8,9]
+
+
+
+DIC_CHOW_LABEL2CARD = {}
+DIC_CHOW_LABEL2CARD[ChowLabelDef.BAMBOO_2_3_1] = [CardIdDef.BAMBOO_2, CardIdDef.BAMBOO_3, CardIdDef.BAMBOO_1]
+DIC_CHOW_LABEL2CARD[ChowLabelDef.BAMBOO_1_3_2] = [CardIdDef.BAMBOO_1, CardIdDef.BAMBOO_3, CardIdDef.BAMBOO_2]
+DIC_CHOW_LABEL2CARD[ChowLabelDef.BAMBOO_1_2_3] = [CardIdDef.BAMBOO_1, CardIdDef.BAMBOO_2, CardIdDef.BAMBOO_3]
+DIC_CHOW_LABEL2CARD[ChowLabelDef.BAMBOO_3_4_2] = [CardIdDef.BAMBOO_3, CardIdDef.BAMBOO_4, CardIdDef.BAMBOO_2]
+DIC_CHOW_LABEL2CARD[ChowLabelDef.BAMBOO_2_4_3] = [CardIdDef.BAMBOO_2, CardIdDef.BAMBOO_4, CardIdDef.BAMBOO_3]
+DIC_CHOW_LABEL2CARD[ChowLabelDef.BAMBOO_2_3_4] = [CardIdDef.BAMBOO_2, CardIdDef.BAMBOO_3, CardIdDef.BAMBOO_4]
+DIC_CHOW_LABEL2CARD[ChowLabelDef.BAMBOO_4_5_3] = [CardIdDef.BAMBOO_4, CardIdDef.BAMBOO_5, CardIdDef.BAMBOO_3]
+DIC_CHOW_LABEL2CARD[ChowLabelDef.BAMBOO_3_5_4] = [CardIdDef.BAMBOO_3, CardIdDef.BAMBOO_5, CardIdDef.BAMBOO_4]
+DIC_CHOW_LABEL2CARD[ChowLabelDef.BAMBOO_3_4_5] = [CardIdDef.BAMBOO_3, CardIdDef.BAMBOO_4, CardIdDef.BAMBOO_5]
+DIC_CHOW_LABEL2CARD[ChowLabelDef.BAMBOO_5_6_4] = [CardIdDef.BAMBOO_5, CardIdDef.BAMBOO_6, CardIdDef.BAMBOO_4]
+DIC_CHOW_LABEL2CARD[ChowLabelDef.BAMBOO_4_6_5] = [CardIdDef.BAMBOO_4, CardIdDef.BAMBOO_6, CardIdDef.BAMBOO_5]
+DIC_CHOW_LABEL2CARD[ChowLabelDef.BAMBOO_4_5_6] = [CardIdDef.BAMBOO_4, CardIdDef.BAMBOO_5, CardIdDef.BAMBOO_6]
+DIC_CHOW_LABEL2CARD[ChowLabelDef.BAMBOO_6_7_5] = [CardIdDef.BAMBOO_6, CardIdDef.BAMBOO_7, CardIdDef.BAMBOO_5]
+DIC_CHOW_LABEL2CARD[ChowLabelDef.BAMBOO_5_7_6] = [CardIdDef.BAMBOO_5, CardIdDef.BAMBOO_7, CardIdDef.BAMBOO_6]
+DIC_CHOW_LABEL2CARD[ChowLabelDef.BAMBOO_5_6_7] = [CardIdDef.BAMBOO_5, CardIdDef.BAMBOO_6, CardIdDef.BAMBOO_7]
+DIC_CHOW_LABEL2CARD[ChowLabelDef.BAMBOO_7_8_6] = [CardIdDef.BAMBOO_7, CardIdDef.BAMBOO_8, CardIdDef.BAMBOO_6]
+DIC_CHOW_LABEL2CARD[ChowLabelDef.BAMBOO_6_8_7] = [CardIdDef.BAMBOO_6, CardIdDef.BAMBOO_8, CardIdDef.BAMBOO_7]
+DIC_CHOW_LABEL2CARD[ChowLabelDef.BAMBOO_6_7_8] = [CardIdDef.BAMBOO_6, CardIdDef.BAMBOO_7, CardIdDef.BAMBOO_8]
+DIC_CHOW_LABEL2CARD[ChowLabelDef.BAMBOO_8_9_7] = [CardIdDef.BAMBOO_8, CardIdDef.BAMBOO_9, CardIdDef.BAMBOO_7]
+DIC_CHOW_LABEL2CARD[ChowLabelDef.BAMBOO_7_9_8] = [CardIdDef.BAMBOO_7, CardIdDef.BAMBOO_9, CardIdDef.BAMBOO_8]
+DIC_CHOW_LABEL2CARD[ChowLabelDef.BAMBOO_7_8_9] = [CardIdDef.BAMBOO_7, CardIdDef.BAMBOO_8, CardIdDef.BAMBOO_9]
+
+DIC_CHOW_LABEL2CARD[ChowLabelDef.CHAR_2_3_1] = [CardIdDef.CHARACTER_2, CardIdDef.CHARACTER_3, CardIdDef.CHARACTER_1]
+DIC_CHOW_LABEL2CARD[ChowLabelDef.CHAR_1_3_2] = [CardIdDef.CHARACTER_1, CardIdDef.CHARACTER_3, CardIdDef.CHARACTER_2]
+DIC_CHOW_LABEL2CARD[ChowLabelDef.CHAR_1_2_3] = [CardIdDef.CHARACTER_1, CardIdDef.CHARACTER_2, CardIdDef.CHARACTER_3]
+DIC_CHOW_LABEL2CARD[ChowLabelDef.CHAR_3_4_2] = [CardIdDef.CHARACTER_3, CardIdDef.CHARACTER_4, CardIdDef.CHARACTER_2]
+DIC_CHOW_LABEL2CARD[ChowLabelDef.CHAR_2_4_3] = [CardIdDef.CHARACTER_2, CardIdDef.CHARACTER_4, CardIdDef.CHARACTER_3]
+DIC_CHOW_LABEL2CARD[ChowLabelDef.CHAR_2_3_4] = [CardIdDef.CHARACTER_2, CardIdDef.CHARACTER_3, CardIdDef.CHARACTER_4]
+DIC_CHOW_LABEL2CARD[ChowLabelDef.CHAR_4_5_3] = [CardIdDef.CHARACTER_4, CardIdDef.CHARACTER_5, CardIdDef.CHARACTER_3]
+DIC_CHOW_LABEL2CARD[ChowLabelDef.CHAR_3_5_4] = [CardIdDef.CHARACTER_3, CardIdDef.CHARACTER_5, CardIdDef.CHARACTER_4]
+DIC_CHOW_LABEL2CARD[ChowLabelDef.CHAR_3_4_5] = [CardIdDef.CHARACTER_3, CardIdDef.CHARACTER_4, CardIdDef.CHARACTER_5]
+DIC_CHOW_LABEL2CARD[ChowLabelDef.CHAR_5_6_4] = [CardIdDef.CHARACTER_5, CardIdDef.CHARACTER_6, CardIdDef.CHARACTER_4]
+DIC_CHOW_LABEL2CARD[ChowLabelDef.CHAR_4_6_5] = [CardIdDef.CHARACTER_4, CardIdDef.CHARACTER_6, CardIdDef.CHARACTER_5]
+DIC_CHOW_LABEL2CARD[ChowLabelDef.CHAR_4_5_6] = [CardIdDef.CHARACTER_4, CardIdDef.CHARACTER_5, CardIdDef.CHARACTER_6]
+DIC_CHOW_LABEL2CARD[ChowLabelDef.CHAR_6_7_5] = [CardIdDef.CHARACTER_6, CardIdDef.CHARACTER_7, CardIdDef.CHARACTER_5]
+DIC_CHOW_LABEL2CARD[ChowLabelDef.CHAR_5_7_6] = [CardIdDef.CHARACTER_5, CardIdDef.CHARACTER_7, CardIdDef.CHARACTER_6]
+DIC_CHOW_LABEL2CARD[ChowLabelDef.CHAR_5_6_7] = [CardIdDef.CHARACTER_5, CardIdDef.CHARACTER_6, CardIdDef.CHARACTER_7]
+DIC_CHOW_LABEL2CARD[ChowLabelDef.CHAR_7_8_6] = [CardIdDef.CHARACTER_7, CardIdDef.CHARACTER_8, CardIdDef.CHARACTER_6]
+DIC_CHOW_LABEL2CARD[ChowLabelDef.CHAR_6_8_7] = [CardIdDef.CHARACTER_6, CardIdDef.CHARACTER_8, CardIdDef.CHARACTER_7]
+DIC_CHOW_LABEL2CARD[ChowLabelDef.CHAR_6_7_8] = [CardIdDef.CHARACTER_6, CardIdDef.CHARACTER_7, CardIdDef.CHARACTER_8]
+DIC_CHOW_LABEL2CARD[ChowLabelDef.CHAR_8_9_7] = [CardIdDef.CHARACTER_8, CardIdDef.CHARACTER_9, CardIdDef.CHARACTER_7]
+DIC_CHOW_LABEL2CARD[ChowLabelDef.CHAR_7_9_8] = [CardIdDef.CHARACTER_7, CardIdDef.CHARACTER_9, CardIdDef.CHARACTER_8]
+DIC_CHOW_LABEL2CARD[ChowLabelDef.CHAR_7_8_9] = [CardIdDef.CHARACTER_7, CardIdDef.CHARACTER_8, CardIdDef.CHARACTER_9]
+
+DIC_CHOW_LABEL2CARD[ChowLabelDef.DOT_2_3_1] = [CardIdDef.DOT_2, CardIdDef.DOT_3, CardIdDef.DOT_1]
+DIC_CHOW_LABEL2CARD[ChowLabelDef.DOT_1_3_2] = [CardIdDef.DOT_1, CardIdDef.DOT_3, CardIdDef.DOT_2]
+DIC_CHOW_LABEL2CARD[ChowLabelDef.DOT_1_2_3] = [CardIdDef.DOT_1, CardIdDef.DOT_2, CardIdDef.DOT_3]
+DIC_CHOW_LABEL2CARD[ChowLabelDef.DOT_3_4_2] = [CardIdDef.DOT_3, CardIdDef.DOT_4, CardIdDef.DOT_2]
+DIC_CHOW_LABEL2CARD[ChowLabelDef.DOT_2_4_3] = [CardIdDef.DOT_2, CardIdDef.DOT_4, CardIdDef.DOT_3]
+DIC_CHOW_LABEL2CARD[ChowLabelDef.DOT_2_3_4] = [CardIdDef.DOT_2, CardIdDef.DOT_3, CardIdDef.DOT_4]
+DIC_CHOW_LABEL2CARD[ChowLabelDef.DOT_4_5_3] = [CardIdDef.DOT_4, CardIdDef.DOT_5, CardIdDef.DOT_3]
+DIC_CHOW_LABEL2CARD[ChowLabelDef.DOT_3_5_4] = [CardIdDef.DOT_3, CardIdDef.DOT_5, CardIdDef.DOT_4]
+DIC_CHOW_LABEL2CARD[ChowLabelDef.DOT_3_4_5] = [CardIdDef.DOT_3, CardIdDef.DOT_4, CardIdDef.DOT_5]
+DIC_CHOW_LABEL2CARD[ChowLabelDef.DOT_5_6_4] = [CardIdDef.DOT_5, CardIdDef.DOT_6, CardIdDef.DOT_4]
+DIC_CHOW_LABEL2CARD[ChowLabelDef.DOT_4_6_5] = [CardIdDef.DOT_4, CardIdDef.DOT_6, CardIdDef.DOT_5]
+DIC_CHOW_LABEL2CARD[ChowLabelDef.DOT_4_5_6] = [CardIdDef.DOT_4, CardIdDef.DOT_5, CardIdDef.DOT_6]
+DIC_CHOW_LABEL2CARD[ChowLabelDef.DOT_6_7_5] = [CardIdDef.DOT_6, CardIdDef.DOT_7, CardIdDef.DOT_5]
+DIC_CHOW_LABEL2CARD[ChowLabelDef.DOT_5_7_6] = [CardIdDef.DOT_5, CardIdDef.DOT_7, CardIdDef.DOT_6]
+DIC_CHOW_LABEL2CARD[ChowLabelDef.DOT_5_6_7] = [CardIdDef.DOT_5, CardIdDef.DOT_6, CardIdDef.DOT_7]
+DIC_CHOW_LABEL2CARD[ChowLabelDef.DOT_7_8_6] = [CardIdDef.DOT_7, CardIdDef.DOT_8, CardIdDef.DOT_6]
+DIC_CHOW_LABEL2CARD[ChowLabelDef.DOT_6_8_7] = [CardIdDef.DOT_6, CardIdDef.DOT_8, CardIdDef.DOT_7]
+DIC_CHOW_LABEL2CARD[ChowLabelDef.DOT_6_7_8] = [CardIdDef.DOT_6, CardIdDef.DOT_7, CardIdDef.DOT_8]
+DIC_CHOW_LABEL2CARD[ChowLabelDef.DOT_8_9_7] = [CardIdDef.DOT_8, CardIdDef.DOT_9, CardIdDef.DOT_7]
+DIC_CHOW_LABEL2CARD[ChowLabelDef.DOT_7_9_8] = [CardIdDef.DOT_7, CardIdDef.DOT_9, CardIdDef.DOT_8]
+DIC_CHOW_LABEL2CARD[ChowLabelDef.DOT_7_8_9] = [CardIdDef.DOT_7, CardIdDef.DOT_8, CardIdDef.DOT_9]
+
+DIC_CHOW_ACTION_STR2LABEL = {}
+for key in DIC_CHOW_LABEL2CARD:
+    card_ids = DIC_CHOW_LABEL2CARD[key]
+    card_str = ",".join([str(cid) for cid in card_ids])
+    DIC_CHOW_ACTION_STR2LABEL[card_str] = key
+
+MAX_HAND_CARD_NUM = 14
+CARD3_SET_NUM = 4
+
+FanType2NumDict = {
+    "PURE_DOUBLE_CHOW": 0,
+    "SHORT_STRAIGHT": 1,
+    "TWO_TERMINAL_CHOWS": 2,
+    "MELDED_KONG": 3,
+    "EDGE_WAIT": 4,
+    "CLOSED_WAIT": 5,
+    "SINGLE_WAIT": 6,
+    "SELF_DRAW": 7,
+    "FLOWER_TILES": 8,
+    "READY_HAND": 9,
+    "DRAGON_PUNG": 10,
+    "CONCEALED_HAND": 11,
+    "ALL_CHOWS": 12,
+    "TILE_HOG": 13,
+    "TWO_CONCEALED_PUNGS": 14,
+    "CONCEALED_KONG": 15,
+    "ALL_SIMPLES": 16,
+    "OUTSIDE_HAND": 17,
+    "FULLY_CONCEALED_HAND": 18,
+    "TWO_MELDED_KONGS": 19,
+    "LAST_TILE": 20,
+    "LITTLE_THREE_WINDS": 21,
+
+    "ALL_PUNGS": 22,
+    "HALF_FLUSH": 23,
+    "TWO_DRAGON_PUNGS": 24,
+    "TWO_CONCEALED_KONGS": 25,
+    "MELDED_HAND": 26,
+    "OUT_WITH_REPLACEMENT_TILE": 27,
+    "ROB_KONG": 28,
+    "LAST_TILE_CLAIM": 29,
+    "PURE_STRAIGHT": 30,
+
+    "PURE_SHIFTED_CHOWS": 31,
+
+    "ALL_FLOWERS": 32,
+
+    "THREE_CONCEALED_PUNGS": 33,
+    "FOUR_HONOUR_PUNGS": 34,
+
+    "BIG_THREE_WINDS": 35,
+
+    "SEVEN_PAIRS": 36,
+
+    "PURE_TRIPLE_CHOW": 37,
+    "PURE_SHIFTED_PUNGS": 38,
+    "FOUR_PURE_SHIFTED_CHOWS": 39,
+
+    "THREE_KONGS": 40,
+    "ALL_TERMINALS_AND_HONOURS": 41,
+
+    "HEAVENLY_READY_HAND": 42,
+
+    "QUADRUPLE_CHOW": 43,
+    "FOUR_PURE_SHIFTED_PUNGS": 44,
+
+    "FOUR_WINDS_SEVEN_PAIRS": 45,
+    "THREE_DRAGONS_SEVEN_PAIRS": 46,
+    "LITTLE_FOUR_WINDS": 47,
+    "LITTLE_THREE_DRAGONS": 48,
+    "ALL_HONOURS": 49,
+    "FOUR_CONCEALED_PUNGS": 50,
+
+    "PURE_TERMINAL_CHOWS": 51,
+
+    "BIG_FOUR_WINDS": 52,
+    "BIG_THREE_DRAGONS": 53,
+    "NINE_GATES": 54,
+    "FOUR_KONGS": 55,
+    "SEVEN_SHIFTED_PAIRS": 56,
+    "UPPER_FOUR": 57,
+    "LOWER_FOUR": 58,
+
+    "BIG_SEVEN_HONOURS": 59,
+
+    "HEAVENLY_HAND": 60,
+    "EARTHLY_HAND": 61,
+    "HUMANLY_HAND": 62,
+
+    "FULL_FLUSH": 63,
+}
+
+FanNum2TypeDict = {}
+for key in FanType2NumDict:
+    FanNum2TypeDict[FanType2NumDict[key]] = key
+
+ConflictTypeDict = {
+    "FULLY_CONCEALED_HAND": ["SELF_DRAW", "CONCEALED_HAND"],
+    "TWO_MELDED_KONGS": ["MELDED_KONG"],
+    "ROB_KONG": ["LAST_TILE"],
+    "TWO_DRAGON_PUNGS": ["DRAGON_PUNG"],
+    "TWO_CONCEALED_KONGS": ["TWO_CONCEALED_PUNGS", "CONCEALED_KONG"],
+    "MELDED_HAND": ["SINGLE_WAIT"],
+    "OUT_WITH_REPLACEMENT_TILE": ["SELF_DRAW"],
+    "PURE_STRAIGHT": ["SHORT_STRAIGHT", "TWO_TERMINAL_CHOWS"],
+    "ALL_FLOWERS": ["FLOWER_TILES"],
+    "THREE_CONCEALED_PUNGS": ["TWO_CONCEALED_PUNGS"],
+    "FOUR_HONOUR_PUNGS": ["ALL_PUNGS"],
+    "BIG_THREE_WINDS": ["LITTLE_THREE_WINDS"],
+    "SEVEN_PAIRS": ["CONCEALED_HAND", "SINGLE_WAIT", "FULLY_CONCEALED_HAND"],
+    "PURE_TRIPLE_CHOW": ["PURE_DOUBLE_CHOW"],
+    "PURE_SHIFTED_PUNGS": ["PURE_TRIPLE_CHOW"],
+    "FOUR_PURE_SHIFTED_CHOWS": ["PURE_SHIFTED_CHOWS", "SHORT_STRAIGHT", "TWO_TERMINAL_CHOWS", "PURE_DOUBLE_CHOW"],
+    "THREE_KONGS": ["TWO_MELDED_KONGS", "MELDED_KONG", "TWO_CONCEALED_KONGS", "CONCEALED_KONG"],
+    "ALL_TERMINALS_AND_HONOURS": ["ALL_PUNGS", "OUTSIDE_HAND"],
+    "HEAVENLY_READY_HAND": ["READY_HAND"],
+    "QUADRUPLE_CHOW": ["PURE_TRIPLE_CHOW", "TILE_HOG", "PURE_DOUBLE_CHOW",
+                       "TWO_TERMINAL_CHOWS", "PURE_SHIFTED_PUNGS"],
+    "FOUR_PURE_SHIFTED_PUNGS": ["PURE_SHIFTED_PUNGS", "PURE_TRIPLE_CHOW", "ALL_PUNGS"],
+    "FOUR_WINDS_SEVEN_PAIRS": ["SEVEN_PAIRS", "CONCEALED_HAND", "SINGLE_WAIT", "FULLY_CONCEALED_HAND"],
+    "THREE_DRAGONS_SEVEN_PAIRS": ["SEVEN_PAIRS", "CONCEALED_HAND", "SINGLE_WAIT", "FULLY_CONCEALED_HAND"],
+    "LITTLE_FOUR_WINDS": ["BIG_THREE_WINDS", "LITTLE_THREE_WINDS"],
+    "LITTLE_THREE_DRAGONS": ["TWO_DRAGON_PUNGS", "DRAGON_PUNG"],
+    "ALL_HONOURS": ["ALL_TERMINALS_AND_HONOURS", "ALL_PUNGS", "FOUR_HONOUR_PUNGS", "OUTSIDE_HAND"],
+    "FOUR_CONCEALED_PUNGS": ["CONCEALED_HAND", "ALL_PUNGS", "THREE_CONCEALED_PUNGS",
+                             "TWO_CONCEALED_PUNGS", "FULLY_CONCEALED_HAND"],
+    "PURE_TERMINAL_CHOWS": ["ALL_CHOWS", "SEVEN_PAIRS", "FULL_FLUSH", "PURE_DOUBLE_CHOW", "TWO_TERMINAL_CHOWS"],
+    "BIG_FOUR_WINDS": ["ALL_PUNGS", "LITTLE_THREE_WINDS", "BIG_THREE_WINDS", "FOUR_HONOUR_PUNGS"],
+    "BIG_THREE_DRAGONS": ["DRAGON_PUNG", "TWO_DRAGON_PUNGS"],
+    "NINE_GATES": ["FULL_FLUSH", "CONCEALED_HAND", "FULLY_CONCEALED_HAND"],
+    "FOUR_KONGS": ["THREE_KONGS", "TWO_MELDED_KONGS", "MELDED_KONG", "SINGLE_WAIT",
+                   "CONCEALED_KONG", "TWO_CONCEALED_KONGS", "ALL_PUNGS"],
+    "SEVEN_SHIFTED_PAIRS": ["SEVEN_PAIRS", "SINGLE_WAIT", "CONCEALED_HAND",
+                            "FULL_FLUSH", "FULLY_CONCEALED_HAND"],
+    "BIG_SEVEN_HONOURS": ["SEVEN_PAIRS", "FOUR_WINDS_SEVEN_PAIRS", "THREE_DRAGONS_SEVEN_PAIRS",
+                          "OUTSIDE_HAND", "SINGLE_WAIT", "CONCEALED_HAND", "FULLY_CONCEALED_HAND",
+                          "ALL_HONOURS"],
+    "HEAVENLY_HAND": ["SELF_DRAW", "CONCEALED_HAND"],
+    "EARTHLY_HAND": ["SELF_DRAW", "CONCEALED_HAND"],
+}
+
+ConflictDict = defaultdict(list)
+for key_fan_type in ConflictTypeDict:
+    for conflict_type in ConflictTypeDict[key_fan_type]:
+        ConflictDict[FanType2NumDict[key_fan_type]].append(FanType2NumDict[conflict_type])
+ConflictList = list(ConflictDict.keys())
+
+FanNumList = [1, 1, 1, 1, 1, 1, 1, 1, 1,
+              2, 2, 2, 2, 2, 2, 2, 2,
+              4, 4, 4, 4,
+              6, 6, 6, 6, 6, 6,
+              8, 8, 8,
+              16, 16, 16, 16,
+              24, 24, 24, 24, 24,
+              32, 32, 32, 32,
+              48, 48, 48, 48,
+              64, 64, 64, 64, 64,
+              88, 88, 88, 88, 88, 88, 88, 88, 88, 88, 88,
+              16]
