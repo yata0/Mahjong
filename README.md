@@ -45,8 +45,8 @@ for game_index in range(game_count):
 There are 24 unique tiles and 72 tiles in total in the 1-on-1 Mahjong game, and the relevant tile ids defined in the source code are listed
 in the table below.
 
-| Tile name | Img | ID |
-| --- | --- | --- |
+| Tile name |  ID |
+| --- | --- |
 | Character 1 | 9 |
 | Character 2 | 10 |
 | Character 3 | 11 |
