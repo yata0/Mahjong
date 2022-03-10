@@ -47,30 +47,30 @@ in the table below.
 
 | Tile name | Img | ID |
 | --- | --- | --- |
-| Character 1 |![1](docs/imgs/0_0_1.png)  | 9 |
-| Character 2 |![2](docs/imgs/0_1.png)| 10 |
-| Character 3 | ![3](docs/imgs/0_2.png) | 11 |
-| Character 4 | ![4](docs/imgs/0_3.png) | 12 |
-| Character 5 |  ![5](docs/imgs/0_4.png)| 13 |
-| Character 6 | ![6](docs/imgs/0_5.png) | 14 |
-| Character 7 | ![7](docs/imgs/0_6.png) | 15 |
-| Character 8 | ![8](docs/imgs/0_7.png) | 16 |
-| Character 9 | ![9](docs/imgs/0_8.png) | 17 |
-| Green | ![27](docs/imgs/0_32.png)| 27 |
-| Red | ![28](docs/imgs/0_33.png) | 28 |
-| White | ![29](docs/imgs/0_31.png) | 29 |
-| East |![30](docs/imgs/0_27.png)  | 30 |
-| West |![31](docs/imgs/0_29.png)  | 31 |
-| North |![32](docs/imgs/0_30.png) | 32 |
-| South |![33](docs/imgs/0_28.png) | 33 |
-| Spring |![34](docs/imgs/0_34.png)  | 34 |
-| Summer |![35](docs/imgs/0_35.png)  | 35 |
-| Autumn | ![36](docs/imgs/0_36.png) | 36 |
-| Winter | ![37](docs/imgs/0_37.png) | 37 |
-| Mei | ![38](docs/imgs/0_38.png) | 38 |
-| Lan |![39](docs/imgs/0_39.png)  | 39 |
-| Zhu | ![40](docs/imgs/0_40.png) | 40 |
-| Ju |![41](docs/imgs/0_41.png)  | 41 |
+| Character 1 | 9 |
+| Character 2 | 10 |
+| Character 3 | 11 |
+| Character 4 | 12 |
+| Character 5 | 13 |
+| Character 6 | 14 |
+| Character 7 |15 |
+| Character 8 |16 |
+| Character 9 | 17 |
+| Green | 27 |
+| Red | 28 |
+| White | 29 |
+| East | 30 |
+| West | 31 |
+| North | 32 |
+| South | 33 |
+| Spring | 34 |
+| Summer | 35 |
+| Autumn | 36 |
+| Winter | 37 |
+| Mei | 38 |
+| Lan | 39 |
+| Zhu | 40 |
+| Ju | 41 |
 
 ### <span id="Actions"> Actions </span>
 There are 10 types of actions with 105 different actions in total, and the relevant action ids defined in the source code are listed
